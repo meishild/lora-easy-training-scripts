@@ -30,10 +30,10 @@ def main() -> None:
     parser = Parser()
     pre_args = parser.parse_args()
     args = ArgStore.convert_args_to_dict()
-    if pre_args.popup:
-        selected = popup_questions.ask_starter_questions(args)
-        if selected == 2:
-            popup_questions.ask_all_questions(args)
+    # if pre_args.popup:
+    selected = popup_questions.ask_starter_questions(args)
+    if selected == 2:
+        popup_questions.ask_all_questions(args)
     q = args['save_json_only']
     multi_path = pre_args.multi_run_path if pre_args.multi_run_path else args['multi_run_folder']
     if multi_path and ensure_path(multi_path, "multi_run_folder"):
@@ -76,7 +76,9 @@ def main() -> None:
     if q:
         quit(0)
 
+    args["log_dir"] = "./logs"
     args = parser.create_args(ArgStore.change_dict_to_internal_names(args))
+
     # print(args)
     train_network.train(args)
 
