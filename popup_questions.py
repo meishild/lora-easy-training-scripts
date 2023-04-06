@@ -98,7 +98,7 @@ def ask_all_questions(args: dict) -> None:
     args['alpha'] = ret if ret else args['net_dim'] / 2
 
     button = popup_modules.ButtonBox("Which type of model do you want to train? Default is LoRA",
-                                     ['LoRA', 'LoCon', 'LoHa'])
+                                     ['LoRA', 'LoCon', 'LoHa', 'ia3'])
     if button.current_value in {"", "LoRA"}:
         args['locon'] = False
         args['lyco'] = False
@@ -107,10 +107,14 @@ def ask_all_questions(args: dict) -> None:
         args['lyco'] = True
         args['network_args'] = dict()
         args['network_args']['algo'] = 'lora'
-    else:
+    elif button.current_value == 'LoHa':
         args['lyco'] = True
         args['network_args'] = dict()
         args['network_args']['algo'] = 'loha'
+    else:
+        args['lyco'] = True
+        args['network_args'] = dict()
+        args['network_args']['algo'] = 'ia3'
 
     if args['lyco']:
         ret = simpledialog.askinteger(title="Conv_dim", prompt="What conv dim do you want to use? Default is 32")
@@ -299,6 +303,15 @@ def ask_all_questions(args: dict) -> None:
     else:
         args['cache_latents'] = False
         args['random_crop'] = True
+
+    ret = messagebox.askyesno(message="Do you want to use min snr gamma training?\n"
+                                      "It supposedly improves outputs but hasn't been fully tested by the community "
+                                      "yet")
+    if ret:
+        ret = simpledialog.askfloat(title="min snr gamma", prompt="What value do you want for the min snr gamma? "
+                                                                  "smaller has more effect\nRecommended value is 5, "
+                                                                  "default is also 5")
+        args['min_snr_gamma'] = ret if ret else 5.0
 
     ret = messagebox.askyesno(message="Do you want to generate test images as you train?\n"
                                       "You must include have them be on separate lines in a txt file")
